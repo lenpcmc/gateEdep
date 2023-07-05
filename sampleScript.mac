@@ -1,0 +1,60 @@
+# Header File
+/control/execute visu.mac
+
+# World Definition
+/gate/geometry/setMaterialDatabase GateMaterials.db
+/gate/world/geometry/setXLength 200 mm
+/gate/world/geometry/setYLength 200 mm
+/gate/world/geometry/setZLength 100 mm 
+/gate/world/setMaterial Air
+
+###########
+# Detector
+###########
+/gate/world/daughters/name myDetector
+/gate/world/daughters/insert box
+/gate/myDetector/setMaterial Water                          # Vary from Water, ScintY, ScintX, PMMA.
+/gate/myDetector/geometry/setXLength 160  mm
+/gate/myDetector/geometry/setYLength 160  mm
+/gate/myDetector/geometry/setZLength 70 mm                  # Vary for protons.
+
+# Physics Definition
+/gate/physics/addPhysicsList emstandard
+
+########
+# Actor
+########
+/gate/actor/addActor DoseActor energyActor
+/gate/actor/energyActor/save energyActor_e-_Water_8.txt    ### Change ### File Name for Output. 
+/gate/actor/energyActor/enableEdep true
+/gate/actor/energyActor/enableDose false
+/gate/actor/energyActor/attachTo myDetector
+/gate/actor/energyActor/stepHitType random
+/gate/actor/energyActor/setSize 160 160 70 mm 
+/gate/actor/energyActor/setResolution 1 1 70                # Depth resolution. May need to change.
+
+# Init
+/gate/run/initialize
+
+#######
+# Beam
+#######
+/gate/source/addSource Mobetron gps
+/gate/source/Mobetron/gps/particle e-                       # Vary from e-, gamma, proton.
+/gate/source/Mobetron/gps/energytype Mono
+/gate/source/Mobetron/gps/monoenergy 8. MeV                 # Vary from 3-20 MeV.
+/gate/source/Mobetron/gps/direction 0 0 1
+/gate/source/Mobetron/gps/shape Cylinder
+/gate/source/Mobetron/gps/radius 3. cm
+/gate/source/Mobetron/gps/halfz 1. mm
+/gate/source/Mobetron/gps/centre 0. 0. -40. mm
+/gate/source/Mobetron/visualize 20 cyan 1
+
+# Application
+/gate/application/setTimeSlice 1. s
+/gate/application/setTimeStart 0. s
+/gate/application/setTimeStop 1. s
+
+/gate/application/setTotalNumberOfPrimaries 10000          # Vary from 10,000-100,000.
+
+/gate/application/start
